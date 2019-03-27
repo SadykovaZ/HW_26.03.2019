@@ -54,7 +54,7 @@ namespace AuctionProjectVer1
             //    PasswordHash = CreateMD5("password")
             //});
 
-           ps.ChangePassword(3, "fff");
+           ps.ChangePassword(1, CreateMD5("jkl"));
             //s.GetGeolocationInfo();
 
             //Application.EnableVisualStyles();
