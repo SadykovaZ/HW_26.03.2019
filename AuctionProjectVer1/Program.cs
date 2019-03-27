@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -9,6 +10,24 @@ namespace AuctionProjectVer1
 {
     static class Program
     {
+        public static string CreateMD5(string input)
+        {
+            
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+               
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
+            }
+        }
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -31,11 +50,11 @@ namespace AuctionProjectVer1
             PasswordService ps = new PasswordService();
             //ps.CreatePassword(new ViewModels.CreatePassword()
             //{
-               
-            //    PasswordHash="fgp125"
+
+            //    PasswordHash = CreateMD5("password")
             //});
 
-            ps.ChangePassword(2, "213rtyuu");
+           ps.ChangePassword(3, "fff");
             //s.GetGeolocationInfo();
 
             //Application.EnableVisualStyles();

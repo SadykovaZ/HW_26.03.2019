@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AuctionProjectVer1.Services
 {
@@ -31,7 +32,7 @@ namespace AuctionProjectVer1.Services
                     {
                         ApplicationUserId = Guid.NewGuid().ToString(),
                         SetupDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        InvalidatedDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                        InvalidatedDate = DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"),
                         PasswordHash = password.PasswordHash
                     };
 
@@ -54,31 +55,46 @@ namespace AuctionProjectVer1.Services
 
             DataSet applicationPasswordDataSet = new DataSet();
             string userPassword = "[dbo].[ApplicationUserPasswordHistories]";
+            string selectUserPassword = $"select * from {userPassword}";
+            string UpdateUserPassword = $"update {userPassword} set [PasswordHash]={newPassword} where [Id]={id}";
 
             using (SqlConnection applicationPasswordConnection = new SqlConnection(ApplicationSettings.IDENTITY_CONNECTION_STRING))
             {
-                applicationPasswordConnection.Open();
-                string UpdateUserPassword = $"update {userPassword} set [PasswordHash]={newPassword} where Id={id}";
-
-                using (SqlDataAdapter passwordAdapter = new SqlDataAdapter(UpdateUserPassword, applicationPasswordConnection))
+                using (SqlDataAdapter passwordAdapter = new SqlDataAdapter(selectUserPassword, applicationPasswordConnection))
                 {
+                    //applicationPasswordConnection.Open();
+
+                    passwordAdapter.Fill(applicationPasswordDataSet, userPassword);
+
+                    SqlCommandBuilder com = new SqlCommandBuilder(passwordAdapter);
+
+                    passwordAdapter.SelectCommand = new SqlCommand(selectUserPassword, applicationPasswordConnection);
+                    com = new SqlCommandBuilder(passwordAdapter);
+                    using (SqlDataAdapter updatePassAdap = new SqlDataAdapter())
+                    {
+                        try
+                        {
+                            applicationPasswordConnection.Open();
+                            SqlCommand cmd = new SqlCommand(UpdateUserPassword, applicationPasswordConnection);
+                            updatePassAdap.UpdateCommand = cmd;
+                            updatePassAdap.Update(applicationPasswordDataSet, userPassword);
+
+                            SqlCommandBuilder com1 = new SqlCommandBuilder(updatePassAdap);
+                            com1 = new SqlCommandBuilder(updatePassAdap);
+                            //updatePassAdap.SelectCommand = new SqlCommand(selectUserPassword, applicationPasswordConnection);
+                            //updatePassAdap.Fill(applicationPasswordDataSet, userPassword);
+                            //updatePassAdap.Update(applicationPasswordDataSet, userPassword);
+
+
+                            applicationPasswordDataSet.AcceptChanges();
+                            MessageBox.Show("Password updated");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                    }
                     passwordAdapter.Update(applicationPasswordDataSet, userPassword);
-
-                    // passwordAdapter.Fill(applicationPasswordDataSet, userPassword);
-                    //SqlCommandBuilder userPasswordCommandBuilder = new SqlCommandBuilder(passwordAdapter);
-                    ////ApplicationUserPasswordHisroty uPassword = new ApplicationUserPasswordHisroty()
-                    ////{
-                       
-                    ////    PasswordHash = newPassword
-                    ////};
-
-                    //passwordAdapter.SelectCommand = new SqlCommand(UpdateUserPassword, applicationPasswordConnection);
-                    //userPasswordCommandBuilder = new SqlCommandBuilder(passwordAdapter);
-
-                    //passwordAdapter.Update(applicationPasswordDataSet, userPassword);
-                    //var dataRow = applicationPasswordDataSet.Tables[userPassword];
-                    //applicationPasswordDataSet.Tables[userPassword].Rows.Add(dataRow);
-                    //passwordAdapter.Update(applicationPasswordDataSet, userPassword);
 
                 }
 
