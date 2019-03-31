@@ -8,6 +8,7 @@ namespace AuctionProjectVer1.Models
 {
     public class ApplicationUserPasswordHisroty
     {
+        public int Id { get; set; }
         public string ApplicationUserId { get; set; }
         public string SetupDate { get; set; }
         public string InvalidatedDate { get; set; }

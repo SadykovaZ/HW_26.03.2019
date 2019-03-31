@@ -1,4 +1,5 @@
 ﻿using AuctionProjectVer1.Services;
+using AuctionProjectVer1.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,14 +48,24 @@ namespace AuctionProjectVer1
             //    DoB = new DateTime(1986, 05, 12)
             //});
 
-            PasswordService ps = new PasswordService();
+            // PasswordService ps = new PasswordService();
             //ps.CreatePassword(new ViewModels.CreatePassword()
             //{
 
-            //    PasswordHash = CreateMD5("password")
+            //    PasswordHash = "ааа"
             //});
+            CreatePassword cp = new CreatePassword()
+            {
+                Email = "sss@mail.ru",
+                oldPassword = "qwerty",
+                newPassword = "newqwerty",
+                newPasswordConfirmation = "newqwerty"
+            };
 
-           ps.ChangePassword(1, CreateMD5("jkl"));
+            PasswordService p = new PasswordService();
+            p.ChangeUserPassword(cp);
+
+
             //s.GetGeolocationInfo();
 
             //Application.EnableVisualStyles();

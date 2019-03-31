@@ -126,11 +126,8 @@ namespace AuctionProjectVer1.Services
                 {
                     Console.WriteLine(ex.Message);
                 }
-
             }
         }
-
-
         public void GetGeolocationInfo()
         {
             WebClient webClient = new WebClient();
@@ -142,7 +139,6 @@ namespace AuctionProjectVer1.Services
             ipStackUrl = "http://" + ipStackUrl;
 
             string ipInfoAsJson = webClient.DownloadString(ipStackUrl);
-
         }
     }
 }
